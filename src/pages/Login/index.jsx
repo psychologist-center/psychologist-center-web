@@ -1,11 +1,24 @@
-import { Flex, Box, Image, Button, Text, Link } from '@chakra-ui/react'
+import {
+  Flex,
+  Box,
+  Image,
+  Button,
+  Text,
+  Link,
+  useToast,
+} from '@chakra-ui/react'
 
 import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { api } from '../../Services/api'
+import { useContext } from 'react'
+import { AuthContext } from '../../contexts/AuthContext'
+import { setCookie } from 'nookies'
+import { AxiosError } from 'axios'
 
 const formData = [
   {
@@ -36,8 +49,26 @@ export function LoginPage() {
     resolver: zodResolver(LoginValidatorSchema),
   })
 
-  function handleLogin(data) {
-    console.log(data)
+  const navigate = useNavigate()
+  const toast = useToast()
+  const { setUser } = useContext(AuthContext)
+
+  async function handleLogin(inputData) {
+    try {
+      const { data } = await api.post('/auth', inputData)
+
+      setUser(data.data)
+      setCookie(null, 'token', data.token)
+      navigate('/home')
+    } catch (e) {
+      toast({
+        title:
+          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
+        status: 'error',
+        isClosable: true,
+        position: 'top-right',
+      })
+    }
   }
 
   return (

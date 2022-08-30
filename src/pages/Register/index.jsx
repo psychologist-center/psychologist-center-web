@@ -1,4 +1,13 @@
-import { Flex, Heading, Image, Button, Text, Link, Box } from '@chakra-ui/react'
+import {
+  Flex,
+  Heading,
+  Image,
+  Button,
+  Text,
+  Link,
+  Box,
+  useToast,
+} from '@chakra-ui/react'
 
 import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
@@ -8,6 +17,8 @@ import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { validate } from 'gerador-validador-cpf'
+import { api } from '../../Services/api'
+import { AxiosError } from 'axios'
 
 const formData = [
   {
@@ -116,8 +127,25 @@ export function RegisterPage() {
     resolver: zodResolver(RegisterValidatorSchema),
   })
 
-  function handleRegister(data) {
-    console.log(data)
+  const toast = useToast()
+  // const { setUser } = useContext(AuthContext)
+
+  async function handleRegister(inputData) {
+    try {
+      const { data } = await api.post('/user/professional/register', inputData)
+
+      // setUser(data.data)
+      // setCookie(null, 'token', data.token)
+      console.log(data)
+    } catch (e) {
+      toast({
+        title:
+          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
+        status: 'error',
+        isClosable: true,
+        position: 'top-right',
+      })
+    }
   }
 
   return (
@@ -156,8 +184,8 @@ export function RegisterPage() {
           <Box
             as="form"
             w="100%"
-            noValidate
             onSubmit={handleSubmit(handleRegister)}
+            noValidate
           >
             {formData.map((item, index) => {
               if (item.inputType === 'select') {
@@ -193,7 +221,7 @@ export function RegisterPage() {
               size="lg"
               mt={4}
             >
-              <Text fontSize="lg">Entrar</Text>
+              <Text fontSize="lg">Cadastrar</Text>
             </Button>
           </Box>
 
