@@ -1,24 +1,13 @@
-import {
-  Flex,
-  Box,
-  Image,
-  Button,
-  Text,
-  Link,
-  useToast,
-} from '@chakra-ui/react'
+import { Flex, Box, Image, Button, Text, Link } from '@chakra-ui/react'
 
 import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Navigate, NavLink } from 'react-router-dom'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { api } from '../../Services/api'
 import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
-import { setCookie } from 'nookies'
-import { AxiosError } from 'axios'
 
 const formData = [
   {
@@ -49,94 +38,82 @@ export function LoginPage() {
     resolver: zodResolver(LoginValidatorSchema),
   })
 
-  const navigate = useNavigate()
-  const toast = useToast()
-  const { setUser } = useContext(AuthContext)
+  const { signIn, signed } = useContext(AuthContext)
 
   async function handleLogin(inputData) {
-    try {
-      const { data } = await api.post('/auth', inputData)
-
-      setUser(data.data)
-      setCookie(null, 'token', data.token)
-      navigate('/home')
-    } catch (e) {
-      toast({
-        title:
-          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      })
-    }
+    await signIn(inputData)
   }
 
-  return (
-    <Flex h="100vh">
-      <Flex
-        direction="column"
-        width="40%"
-        bg="brand-purple"
-        borderRightRadius="md"
-        alignItems="center"
-      >
-        <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
-      </Flex>
-      <Flex
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        flex="1"
-      >
-        <Box
-          as="form"
-          w="100%"
-          p="20%"
-          onSubmit={handleSubmit(handleLogin)}
-          noValidate
+  if (signed) {
+    return <Navigate to="/home" />
+  } else {
+    return (
+      <Flex h="100vh">
+        <Flex
+          direction="column"
+          width="40%"
+          bg="brand-purple"
+          borderRightRadius="md"
+          alignItems="center"
         >
-          {formData.map((item, index) => {
-            return (
-              <InputForm
-                error={errors[item.name]}
-                key={index}
-                labelText={item.labelText}
-                placeholder={item.placeholder}
-                typeInput={item.inputType}
-                {...register(item.name)}
-              />
-            )
-          })}
-
-          <Flex w="100%" justifyContent="end" mt={4}>
-            <Link fontSize="lg">Esqueci minha senha</Link>
-          </Flex>
-
-          <Button
-            color="base-white"
-            colorScheme="purple"
-            type="submit"
-            width="full"
-            size="lg"
-            mt={4}
+          <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
+        </Flex>
+        <Flex
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          flex="1"
+        >
+          <Box
+            as="form"
+            w="100%"
+            p="20%"
+            onSubmit={handleSubmit(handleLogin)}
+            noValidate
           >
-            <Text fontSize="lg">Entrar</Text>
-          </Button>
+            {formData.map((item, index) => {
+              return (
+                <InputForm
+                  error={errors[item.name]}
+                  key={index}
+                  labelText={item.labelText}
+                  placeholder={item.placeholder}
+                  typeInput={item.inputType}
+                  {...register(item.name)}
+                />
+              )
+            })}
 
-          <Flex w="100%" justifyContent="start" gap={2} mt={4}>
-            <Text fontSize="lg">Não tem uma conta? </Text>
-            <Link
-              as={NavLink}
-              to="/register"
-              fontSize="lg"
-              color="brand-purple"
-              fontWeight="medium"
+            <Flex w="100%" justifyContent="end" mt={4}>
+              <Link fontSize="lg">Esqueci minha senha</Link>
+            </Flex>
+
+            <Button
+              color="base-white"
+              colorScheme="purple"
+              type="submit"
+              width="full"
+              size="lg"
+              mt={4}
             >
-              Cadastre-se
-            </Link>
-          </Flex>
-        </Box>
+              <Text fontSize="lg">Entrar</Text>
+            </Button>
+
+            <Flex w="100%" justifyContent="start" gap={2} mt={4}>
+              <Text fontSize="lg">Não tem uma conta? </Text>
+              <Link
+                as={NavLink}
+                to="/register"
+                fontSize="lg"
+                color="brand-purple"
+                fontWeight="medium"
+              >
+                Cadastre-se
+              </Link>
+            </Flex>
+          </Box>
+        </Flex>
       </Flex>
-    </Flex>
-  )
+    )
+  }
 }

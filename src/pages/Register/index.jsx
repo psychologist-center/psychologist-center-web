@@ -1,24 +1,15 @@
-import {
-  Flex,
-  Heading,
-  Image,
-  Button,
-  Text,
-  Link,
-  Box,
-  useToast,
-} from '@chakra-ui/react'
+import { Flex, Heading, Image, Button, Text, Link, Box } from '@chakra-ui/react'
 
 import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
 import { SelectInput } from '../../components/SelectInput'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Navigate } from 'react-router-dom'
 import * as zod from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { validate } from 'gerador-validador-cpf'
-import { api } from '../../Services/api'
-import { AxiosError } from 'axios'
+import { useContext } from 'react'
+import { AuthContext } from '../../contexts/AuthContext'
 
 const formData = [
   {
@@ -93,13 +84,20 @@ const formData = [
     inputType: 'text',
     name: 'state',
   },
+  {
+    labelText: 'Password',
+    placeholder: '********',
+    inputType: 'password',
+    name: 'password',
+  },
 ]
 
 const RegisterValidatorSchema = zod.object({
   name: zod.string().min(1, 'O campo nome não pode ser vazio'),
-  email: zod.string().email('Digite um e-mail válido'),
   password: zod.string().min(6, 'O senha deve pelo menos 6 caracteres'),
+  email: zod.string().email('Digite um e-mail válido'),
   cpf: zod.custom(validate, { message: 'Digite um CPF válido' }),
+  crp: zod.string().min(1, 'O campo crp não pode ser vazio'),
   genre: zod.enum(['H', 'M', 'NB', 'NI'], ' Selecione um gênero válido'),
   birth_date: zod.preprocess(
     (arg) => {
@@ -127,118 +125,106 @@ export function RegisterPage() {
     resolver: zodResolver(RegisterValidatorSchema),
   })
 
-  const toast = useToast()
-  // const { setUser } = useContext(AuthContext)
+  const { signUp, signed } = useContext(AuthContext)
 
   async function handleRegister(inputData) {
-    try {
-      const { data } = await api.post('/user/professional/register', inputData)
-
-      // setUser(data.data)
-      // setCookie(null, 'token', data.token)
-      console.log(data)
-    } catch (e) {
-      toast({
-        title:
-          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      })
-    }
+    signUp(inputData)
   }
-
-  return (
-    <Flex h="100vh">
-      <Flex
-        direction="column"
-        width="40%"
-        bg="brand-purple"
-        borderRightRadius="md"
-        alignItems="center"
-      >
-        <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
-      </Flex>
-      <Flex
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        flex="1"
-        overflowY="scroll"
-      >
+  if (signed) {
+    return <Navigate to="/home" />
+  } else {
+    return (
+      <Flex h="100vh">
         <Flex
           direction="column"
-          alignSelf="start"
-          mt="40rem"
-          w="100%"
-          px="20%"
-          py="10rem"
+          width="40%"
+          bg="brand-purple"
+          borderRightRadius="md"
+          alignItems="center"
         >
-          <Box mb={5}>
-            <Heading color="brand-purple">Bem Vindo!</Heading>
-            <Text>
-              Preencha corretamente as informações para realizar seu cadastro.
-            </Text>
-          </Box>
-
-          <Box
-            as="form"
+          <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
+        </Flex>
+        <Flex
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          flex="1"
+          overflowY="scroll"
+        >
+          <Flex
+            direction="column"
+            alignSelf="start"
+            mt="40rem"
             w="100%"
-            onSubmit={handleSubmit(handleRegister)}
-            noValidate
+            px="20%"
+            py="10rem"
           >
-            {formData.map((item, index) => {
-              if (item.inputType === 'select') {
-                return (
-                  <SelectInput
-                    error={errors[item.name]}
-                    key={index}
-                    labelText={item.labelText}
-                    placeholder={item.placeholder2}
-                    options={item.options}
-                    {...register(item.name)}
-                  />
-                )
-              } else {
-                return (
-                  <InputForm
-                    error={errors[item.name]}
-                    key={index}
-                    labelText={item.labelText}
-                    placeholder={item.placeholder}
-                    typeInput={item.inputType}
-                    {...register(item.name)}
-                  />
-                )
-              }
-            })}
+            <Box mb={5}>
+              <Heading color="brand-purple">Bem Vindo!</Heading>
+              <Text>
+                Preencha corretamente as informações para realizar seu cadastro.
+              </Text>
+            </Box>
 
-            <Button
-              color="base-white"
-              colorScheme="purple"
-              type="submit"
-              width="full"
-              size="lg"
-              mt={4}
+            <Box
+              as="form"
+              w="100%"
+              onSubmit={handleSubmit(handleRegister)}
+              noValidate
             >
-              <Text fontSize="lg">Cadastrar</Text>
-            </Button>
-          </Box>
+              {formData.map((item, index) => {
+                if (item.inputType === 'select') {
+                  return (
+                    <SelectInput
+                      error={errors[item.name]}
+                      key={index}
+                      labelText={item.labelText}
+                      placeholder={item.placeholder2}
+                      options={item.options}
+                      {...register(item.name)}
+                    />
+                  )
+                } else {
+                  return (
+                    <InputForm
+                      error={errors[item.name]}
+                      key={index}
+                      labelText={item.labelText}
+                      placeholder={item.placeholder}
+                      typeInput={item.inputType}
+                      {...register(item.name)}
+                    />
+                  )
+                }
+              })}
 
-          <Flex w="100%" justifyContent="start" gap={2} mt={5}>
-            <Text fontSize="lg">Já possui uma conta? </Text>
-            <Link
-              as={NavLink}
-              to="/"
-              fontSize="lg"
-              color="brand-purple"
-              fontWeight="medium"
-            >
-              Entre
-            </Link>
+              <Button
+                color="base-white"
+                colorScheme="purple"
+                type="submit"
+                width="full"
+                size="lg"
+                mt={4}
+              >
+                <Text fontSize="lg">Cadastrar</Text>
+              </Button>
+            </Box>
+
+            <Flex w="100%" justifyContent="start" gap={2} mt={5}>
+              <Text fontSize="lg">Já possui uma conta? </Text>
+              <Link
+                as={NavLink}
+                to="/"
+                fontSize="lg"
+                color="brand-purple"
+                fontWeight="medium"
+              >
+                Entre
+              </Link>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
-    </Flex>
-  )
+    )
+  }
 }
