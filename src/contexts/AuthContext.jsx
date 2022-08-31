@@ -76,6 +76,11 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  const signOut = async () => {
+    destroyCookie(null, 'token')
+    window.location.reload(true)
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -83,6 +88,7 @@ export const AuthProvider = ({ children }) => {
         signed: !!user,
         signIn,
         signUp,
+        signOut,
       }}
     >
       {children}
