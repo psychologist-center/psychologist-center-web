@@ -9,6 +9,7 @@ export const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [isFetching, setIsFetching] = useState(true)
   const toast = useToast()
   const navigate = useNavigate()
 
@@ -29,7 +30,13 @@ export const AuthProvider = ({ children }) => {
           isClosable: true,
           position: 'top-right',
         })
+      } finally {
+        setIsFetching(false)
       }
+    }
+
+    if (!token) {
+      setIsFetching(false)
     }
 
     if (token) {
@@ -64,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data.data)
       setCookie(null, 'token', data.token)
-      navigate('/home')
+      navigate('/dashboard')
     } catch (e) {
       toast({
         title:
@@ -76,9 +83,10 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const signOut = async () => {
+  const signOut = () => {
     destroyCookie(null, 'token')
     window.location.reload(true)
+    destroyCookie(null, 'token')
   }
 
   return (
@@ -89,6 +97,7 @@ export const AuthProvider = ({ children }) => {
         signIn,
         signUp,
         signOut,
+        isFetching,
       }}
     >
       {children}

@@ -19,6 +19,7 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Image,
 } from '@chakra-ui/react'
 import {
   FiHome,
@@ -29,16 +30,18 @@ import {
   FiChevronDown,
 } from 'react-icons/fi'
 import { AuthContext } from '../../contexts/AuthContext'
+import { Outlet } from 'react-router-dom'
+
+import menteSaLogo from '../../assets/mentesa-light.svg'
 
 const LinkItems = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Pacientes', icon: FiTrendingUp },
+  { name: 'Home', icon: FiHome, path: '/dashboard' },
+  { name: 'Pacientes', icon: FiTrendingUp, path: '/dashboard/paciente' },
   { name: 'Sessões', icon: FiCompass },
 ]
 
-export function HomePage({ children }) {
+export function HomeLayout() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { user } = useContext(AuthContext)
 
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -62,20 +65,18 @@ export function HomePage({ children }) {
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        {children}
+        <Outlet />
       </Box>
     </Box>
   )
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
-  const { user } = useContext(AuthContext)
-
   return (
     <Box
       transition="3s ease"
       bg={useColorModeValue('white', 'gray.900')}
-      borderRight="1px"
+      borderRight="0px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
@@ -83,13 +84,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          MenteSã
-        </Text>
+        <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem key={link.name} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}
@@ -97,11 +96,10 @@ const SidebarContent = ({ onClose, ...rest }) => {
   )
 }
 
-const NavItem = ({ icon, children, ...rest }) => {
-  const { user } = useContext(AuthContext)
+const NavItem = ({ path, icon, children, ...rest }) => {
   return (
     <Link
-      href="#"
+      href={path}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
     >

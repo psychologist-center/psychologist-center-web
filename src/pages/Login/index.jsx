@@ -45,7 +45,7 @@ export function LoginPage() {
   }
 
   if (signed) {
-    return <Navigate to="/home" />
+    return <Navigate to="/dashboard" />
   } else {
     return (
       <Flex h="100vh">
