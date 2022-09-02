@@ -1,6 +1,5 @@
 import { useToast } from '@chakra-ui/react'
 import { useState, createContext, useEffect } from 'react'
-import { parseCookies, destroyCookie, setCookie } from 'nookies'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { AxiosError } from 'axios'
@@ -14,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const { token } = parseCookies()
+    const token = localStorage.getItem('@Auth:token')
 
     async function getUserData() {
       try {
@@ -23,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         })
         setUser(data)
       } catch (e) {
-        destroyCookie(null, 'token')
+        localStorage.clear()
         toast({
           title: 'Usuário deslogado',
           status: 'error',
@@ -53,7 +52,7 @@ export const AuthProvider = ({ children }) => {
 
       api.defaults.headers.common.Authorization = `Bearer ${data.token}`
       setUser(data.data)
-      setCookie(null, 'token', data.token)
+      localStorage.setItem('@Auth:token', data.token)
     } catch (e) {
       toast({
         title:
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await api.post('/user/professional/register', inputData)
 
       setUser(data.data)
-      setCookie(null, 'token', data.token)
+      localStorage.setItem('@Auth:token', data.token)
       navigate('/dashboard')
     } catch (e) {
       toast({
@@ -84,9 +83,8 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signOut = () => {
-    destroyCookie(null, 'token')
-    window.location.reload(true)
-    destroyCookie(null, 'token')
+    localStorage.clear()
+    window.location.reload()
   }
 
   return (

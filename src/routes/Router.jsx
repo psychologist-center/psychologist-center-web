@@ -12,12 +12,11 @@ export function Router() {
       <Route path="/">
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-
-        <Route path="dashboard" element={<PrivateRoute />}>
-          <Route path="" element={<HomeLayout />}>
-            <Route path="" element={<DashboardPage />} />
-            <Route path="paciente" element={<PacientePage />} />
-          </Route>
+      </Route>
+      <Route path="/dashboard" element={<PrivateRoute />}>
+        <Route path="" element={<HomeLayout />}>
+          <Route path="" element={<DashboardPage />} />
+          <Route path="paciente" element={<PacientePage />} />
         </Route>
       </Route>
     </Routes>
