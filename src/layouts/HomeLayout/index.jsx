@@ -37,7 +37,7 @@ import menteSaLogo from '../../assets/mentesa-light.svg'
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/dashboard' },
   { name: 'Pacientes', icon: FiTrendingUp, path: '/dashboard/paciente' },
-  { name: 'Sessões', icon: FiCompass },
+  { name: 'Sessões', icon: FiCompass, path: '/dashboard/sessao' },
 ]
 
 export function HomeLayout() {
