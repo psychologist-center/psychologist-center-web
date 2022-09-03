@@ -64,9 +64,13 @@ $ npm run dev
 
 ## Suporte
 
-- Backend - [Acessar Repositório Backend](https://github.com/DavidAugustoo/MenteSa-backend)
+- Acessar Servidor Hospedado - [https://mentesa.davidaugusto.tech/](https://mentesa.davidaugusto.tech/)
 
 - Documentação do Projeto - [Acessar PDF](https://drive.google.com/file/d/1U6BPduRu61tPzoFHiDDpq7ZMQ5s76X7J/view?usp=sharing)
+
+- Backend - [Acessar Repositório Backend](https://github.com/DavidAugustoo/MenteSa-backend)
+
+
 
 ## Contato
 
