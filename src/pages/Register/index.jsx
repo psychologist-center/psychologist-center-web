@@ -1,4 +1,12 @@
-import { Flex, Heading, Button, Text, Link, Box } from '@chakra-ui/react'
+import {
+  Flex,
+  Heading,
+  Button,
+  Text,
+  Link,
+  Box,
+  Spinner,
+} from '@chakra-ui/react'
 
 import { InputForm } from '../../components/FormLabel'
 import { SelectInput } from '../../components/SelectInput'
@@ -43,11 +51,11 @@ const formData = [
     name: 'genre',
     options: [
       {
-        value: 'H',
+        value: 'M',
         label: 'Homem',
       },
       {
-        value: 'M',
+        value: 'F',
         label: 'Mulher',
       },
       {
@@ -98,7 +106,7 @@ const RegisterValidatorSchema = zod.object({
   email: zod.string().email('Digite um e-mail válido'),
   cpf: zod.custom(validate, { message: 'Digite um CPF válido' }),
   crp: zod.string().min(1, 'O campo crp não pode ser vazio'),
-  genre: zod.enum(['H', 'M', 'NB', 'NI'], ' Selecione um gênero válido'),
+  genre: zod.enum(['M', 'F', 'NB', 'NI'], ' Selecione um gênero válido'),
   birth_date: zod.preprocess(
     (arg) => {
       if (typeof arg === 'string' || arg instanceof Date) return new Date(arg)
@@ -125,7 +133,7 @@ export function RegisterPage() {
     resolver: zodResolver(RegisterValidatorSchema),
   })
 
-  const { signUp, signed } = useContext(AuthContext)
+  const { signUp, signed, isLoading } = useContext(AuthContext)
 
   async function handleRegister(inputData) {
     signUp(inputData)
@@ -200,7 +208,7 @@ export function RegisterPage() {
                 size="lg"
                 mt={4}
               >
-                <Text fontSize="lg">Cadastrar</Text>
+                {isLoading ? <Spinner /> : <Text fontSize="lg">Cadastrar</Text>}
               </Button>
             </Box>
 

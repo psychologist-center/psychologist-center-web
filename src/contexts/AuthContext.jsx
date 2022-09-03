@@ -9,6 +9,7 @@ export const AuthContext = createContext({})
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isFetching, setIsFetching] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
   const navigate = useNavigate()
 
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (inputData) => {
     try {
+      setIsLoading(true)
       const { data } = await api.post('/auth', {
         email: inputData.email,
         password: inputData.password,
@@ -54,18 +56,24 @@ export const AuthProvider = ({ children }) => {
       setUser(data.data)
       localStorage.setItem('@Auth:token', data.token)
     } catch (e) {
+      console.log('ERRO', e)
       toast({
         title:
-          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
+          e instanceof AxiosError && e.response.data
+            ? e.response.data.message
+            : 'Erro Interno',
         status: 'error',
         isClosable: true,
         position: 'top-right',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
   const signUp = async (inputData) => {
     try {
+      setIsLoading(true)
       const { data } = await api.post('/user/professional/register', inputData)
 
       setUser(data.data)
@@ -74,11 +82,15 @@ export const AuthProvider = ({ children }) => {
     } catch (e) {
       toast({
         title:
-          e instanceof AxiosError ? e.response.data.message : 'Erro Interno',
+          e instanceof AxiosError && e.response.data
+            ? e.response.data.message
+            : 'Erro Interno',
         status: 'error',
         isClosable: true,
         position: 'top-right',
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -96,6 +108,7 @@ export const AuthProvider = ({ children }) => {
         signUp,
         signOut,
         isFetching,
+        isLoading,
       }}
     >
       {children}

@@ -1,4 +1,12 @@
-import { Flex, Box, Button, Text, Link, Heading } from '@chakra-ui/react'
+import {
+  Flex,
+  Box,
+  Button,
+  Text,
+  Link,
+  Heading,
+  Spinner,
+} from '@chakra-ui/react'
 
 import { InputForm } from '../../components/FormLabel'
 import { Navigate, NavLink } from 'react-router-dom'
@@ -38,7 +46,7 @@ export function LoginPage() {
     resolver: zodResolver(LoginValidatorSchema),
   })
 
-  const { signIn, signed } = useContext(AuthContext)
+  const { signIn, signed, isLoading } = useContext(AuthContext)
 
   async function handleLogin(inputData) {
     await signIn(inputData)
@@ -97,7 +105,7 @@ export function LoginPage() {
               size="lg"
               mt={4}
             >
-              <Text fontSize="lg">Entrar</Text>
+              {isLoading ? <Spinner /> : <Text fontSize="lg">Entrar</Text>}
             </Button>
 
             <Flex w="100%" justifyContent="start" gap={2} mt={4}>
