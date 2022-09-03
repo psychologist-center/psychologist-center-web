@@ -57,8 +57,14 @@ export function CustomTable({ columns, data }) {
 
   // Render the UI for your table
   return (
-    <>
-      <Center h="50vh">
+    <Flex
+      direction="column"
+      mt="8%"
+      w="100%"
+      justifyContent="center"
+      align-items="center"
+    >
+      <Center>
         <Table {...getTableProps()} w="90%">
           <Thead bg="brand-purple">
             {headerGroups.map((headerGroup, i) => (
@@ -161,7 +167,7 @@ export function CustomTable({ columns, data }) {
               }}
             >
               {console.log(pageSize)}
-              {[3].map((pageSize) => (
+              {[5].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   Show {pageSize}
                 </option>
@@ -188,6 +194,6 @@ export function CustomTable({ columns, data }) {
           </Flex>
         </Flex>
       </Center>
-    </>
+    </Flex>
   )
 }
