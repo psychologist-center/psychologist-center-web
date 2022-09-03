@@ -1,6 +1,5 @@
-import { Flex, Box, Image, Button, Text, Link } from '@chakra-ui/react'
+import { Flex, Box, Button, Text, Link, Heading } from '@chakra-ui/react'
 
-import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
 import { Navigate, NavLink } from 'react-router-dom'
 import * as zod from 'zod'
@@ -8,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+import { SidebarLogin } from '../../components/SidebarLogin'
 
 const formData = [
   {
@@ -49,15 +49,8 @@ export function LoginPage() {
   } else {
     return (
       <Flex h="100vh">
-        <Flex
-          direction="column"
-          width="40%"
-          bg="brand-purple"
-          borderRightRadius="md"
-          alignItems="center"
-        >
-          <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
-        </Flex>
+        <SidebarLogin />
+
         <Flex
           direction="column"
           alignItems="center"
@@ -71,6 +64,14 @@ export function LoginPage() {
             onSubmit={handleSubmit(handleLogin)}
             noValidate
           >
+            <Box mb={10}>
+              <Heading color="brand-purple">Bem Vindo!</Heading>
+              <Text>
+                Preencha corretamente as informações para realizar seu login
+                como profissional.
+              </Text>
+            </Box>
+
             {formData.map((item, index) => {
               return (
                 <InputForm

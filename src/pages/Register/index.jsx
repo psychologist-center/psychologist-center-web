@@ -1,6 +1,5 @@
-import { Flex, Heading, Image, Button, Text, Link, Box } from '@chakra-ui/react'
+import { Flex, Heading, Button, Text, Link, Box } from '@chakra-ui/react'
 
-import menteSaLogo from '../../assets/mentesa.svg'
 import { InputForm } from '../../components/FormLabel'
 import { SelectInput } from '../../components/SelectInput'
 import { NavLink, Navigate } from 'react-router-dom'
@@ -10,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { validate } from 'gerador-validador-cpf'
 import { useContext } from 'react'
 import { AuthContext } from '../../contexts/AuthContext'
+import { SidebarLogin } from '../../components/SidebarLogin'
 
 const formData = [
   {
@@ -135,15 +135,8 @@ export function RegisterPage() {
   } else {
     return (
       <Flex h="100vh">
-        <Flex
-          direction="column"
-          width="40%"
-          bg="brand-purple"
-          borderRightRadius="md"
-          alignItems="center"
-        >
-          <Image boxSize="150px" src={menteSaLogo} alt="Dan Abramov" />
-        </Flex>
+        <SidebarLogin />
+
         <Flex
           direction="column"
           alignItems="center"
@@ -162,7 +155,8 @@ export function RegisterPage() {
             <Box mb={5}>
               <Heading color="brand-purple">Bem Vindo!</Heading>
               <Text>
-                Preencha corretamente as informações para realizar seu cadastro.
+                Preencha corretamente as informações para realizar seu cadastro
+                de profissional.
               </Text>
             </Box>
 
