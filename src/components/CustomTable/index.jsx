@@ -59,8 +59,8 @@ export function CustomTable({ columns, data }) {
   return (
     <Flex
       direction="column"
-      mt="8%"
       w="100%"
+      mt="1%"
       justifyContent="center"
       align-items="center"
     >

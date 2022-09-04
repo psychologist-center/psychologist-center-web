@@ -78,5 +78,9 @@ export function SessionPage() {
     getSessoes()
   }, [token, sessionTypeInterface, statusInterface])
 
-  return <CustomTable columns={columns} data={sessoes} />
+  return (
+    <>
+      <CustomTable columns={columns} data={sessoes} />
+    </>
+  )
 }

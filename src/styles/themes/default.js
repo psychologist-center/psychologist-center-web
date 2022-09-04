@@ -7,6 +7,7 @@ const defaultTheme = {
     'base-error': '#f84747',
     'brand-black': '#131313',
     'brand-purple': '#7317E9',
+    'brand-purple-hover': '#8F37FF',
     'brand-purple-dark': '#7317E9',
   },
   textSizes: {
