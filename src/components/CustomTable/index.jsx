@@ -26,7 +26,7 @@ import {
   ChevronLeftIcon,
 } from '@chakra-ui/icons'
 
-export function CustomTable({ columns, data }) {
+export function CustomTable({ columns, data, onOpen, setSelectedPatient }) {
   // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
@@ -55,6 +55,11 @@ export function CustomTable({ columns, data }) {
     usePagination,
   )
 
+  function handleOpenViewPatient(data) {
+    setSelectedPatient(data.values)
+    onOpen()
+  }
+
   // Render the UI for your table
   return (
     <Flex
@@ -82,9 +87,11 @@ export function CustomTable({ columns, data }) {
               prepareRow(row)
               return (
                 <Tr
+                  onClick={() => handleOpenViewPatient(row)}
                   _hover={{
                     background: 'white',
                     color: 'teal.500',
+                    cursor: 'pointer',
                   }}
                   key={i}
                   {...row.getRowProps()}

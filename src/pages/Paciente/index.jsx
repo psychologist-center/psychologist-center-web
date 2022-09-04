@@ -1,117 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { CustomTable } from '../../components/CustomTable'
-import { InitialFocus } from '../../components/Modal'
 import { api } from '../../services/api'
-import { Flex } from '@chakra-ui/react'
-
-const formData = [
-  {
-    labelText: 'Nome',
-    placeholder: 'David Augusto',
-    inputType: 'text',
-    name: 'name',
-  },
-  {
-    labelText: 'E-mail',
-    placeholder: 'davidaugusto@gmail.com',
-    inputType: 'email',
-    name: 'email',
-  },
-  {
-    labelText: 'CPF',
-    placeholder: '23232312334',
-    inputType: 'number',
-    name: 'cpf',
-  },
-  {
-    labelText: 'Gênero',
-    placeholder: 'São Paulo',
-    inputType: 'select',
-    name: 'genre',
-    options: [
-      {
-        value: 'M',
-        label: 'Homem',
-      },
-      {
-        value: 'F',
-        label: 'Mulher',
-      },
-      {
-        value: 'NB',
-        label: 'Não binário',
-      },
-      {
-        value: 'NI',
-        label: 'Prefiro não informar',
-      },
-    ],
-  },
-  {
-    labelText: 'Data de Aniversário',
-    placeholder: '10/08/2003',
-    inputType: 'date',
-    name: 'birth_date',
-  },
-  {
-    labelText: 'Endereço',
-    placeholder: 'Avenida Paulista, 1400',
-    inputType: 'text',
-    name: 'address',
-  },
-  {
-    labelText: 'Cidade',
-    placeholder: 'São Paulo',
-    inputType: 'text',
-    name: 'city',
-  },
-  {
-    labelText: 'Estado',
-    placeholder: 'SP',
-    inputType: 'text',
-    name: 'state',
-  },
-]
+import { Flex, useDisclosure, Button } from '@chakra-ui/react'
+import { PlusCircle } from 'phosphor-react'
+import { columns } from '../../utils/constants/patientsColumn'
+import { ViewPatientModal } from '../../components/ViewPatientModal'
+import { AddPatientModel } from '../../components/AddPatientModel'
 
 export function PacientePage() {
-  const [pacientes, setPacientes] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const token = localStorage.getItem('@Auth:token')
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Meus Pacientes',
-        columns: [
-          {
-            Header: 'Nome',
-            accessor: 'name',
-          },
-          {
-            Header: 'Endereço',
-            accessor: 'address',
-          },
-          {
-            Header: 'E-mail',
-            accessor: 'email',
-          },
-          {
-            Header: 'Gênero',
-            accessor: 'genre',
-          },
-
-          {
-            Header: 'Cidade',
-            accessor: 'city',
-          },
-          {
-            Header: 'Estado',
-            accessor: 'state',
-          },
-        ],
-      },
-    ],
-    [],
-  )
+  const [pacientes, setPacientes] = useState([])
+  const addPatient = useDisclosure()
+  const viewPatient = useDisclosure()
+  const [selectedPatient, setSelectedPatient] = useState({})
 
   useEffect(() => {
     const getPacientes = async () => {
@@ -123,12 +25,38 @@ export function PacientePage() {
     }
 
     getPacientes()
-  }, [])
+  }, [token])
 
   return (
     <Flex direction="column" alignItems="center" mt="8%">
-      <InitialFocus title="Registrar Paciente" formData={formData} />
-      <CustomTable columns={columns} data={pacientes} />
+      <Button
+        bg="brand-purple"
+        color="base-white"
+        _hover={{
+          background: 'brand-purple-hover',
+          color: 'base-white',
+        }}
+        onClick={addPatient.onOpen}
+      >
+        <Flex justifyContent="center" align="center" gap="2">
+          <PlusCircle size={23} weight="fill" /> Adicionar Paciente
+        </Flex>
+      </Button>
+
+      <AddPatientModel setPacientes={setPacientes} addPatient={addPatient} />
+
+      <ViewPatientModal
+        setPacientes={setPacientes}
+        viewPatient={viewPatient}
+        data={selectedPatient}
+      />
+
+      <CustomTable
+        setSelectedPatient={setSelectedPatient}
+        columns={columns}
+        data={pacientes}
+        onOpen={viewPatient.onOpen}
+      />
     </Flex>
   )
 }
