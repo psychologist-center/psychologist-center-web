@@ -27,11 +27,11 @@ Obs: Funcionalidades desmarcadas estão em andamento
  - [x] - Cadastro de profissionais
  - [x] - Cadastro de pacientes
  - [x] - Autenticação de usuário na plataforma
- - [ ] - Exclusão de pacientes
- - [ ] - Visualizar detalhes de pacientes
+ - [x] - Exclusão de pacientes
+ - [x] - Visualizar detalhes de pacientes
  - [x] - Listagem de pacientes com paginação
  - [x] - Listagem de profissionais com paginação
- - [ ] - Edição de informações cadastrais de pacientes e profissionais
+ - [x] - Edição de informações cadastrais de pacientes e profissionais
  - [ ] - Agendamento de sessão
  - [x] - Listagem de sessões com paginação
  - [ ] - Editar sessões cadastradas
