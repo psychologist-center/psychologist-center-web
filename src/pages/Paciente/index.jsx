@@ -8,8 +8,6 @@ import { ViewPatientModal } from '../../components/ViewPatientModal'
 import { AddPatientModel } from '../../components/AddPatientModel'
 
 export function PacientePage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const token = localStorage.getItem('@Auth:token')
   const [pacientes, setPacientes] = useState([])
   const addPatient = useDisclosure()
   const viewPatient = useDisclosure()
@@ -17,15 +15,13 @@ export function PacientePage() {
 
   useEffect(() => {
     const getPacientes = async () => {
-      const { data } = await api.get('/user/list/patient', {
-        headers: { Authorization: 'Bearer ' + token },
-      })
+      const { data } = await api.get('/user/list/patient')
 
       setPacientes(data.data)
     }
 
     getPacientes()
-  }, [token])
+  }, [])
 
   return (
     <Flex direction="column" alignItems="center" mt="8%">

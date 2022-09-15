@@ -6,7 +6,6 @@ import { CustomTable } from '../../components/CustomTable'
 
 export function SessionPage() {
   const [sessoes, setSessoes] = useState([])
-  const token = localStorage.getItem('@Auth:token')
 
   const columns = React.useMemo(
     () => [
@@ -44,14 +43,11 @@ export function SessionPage() {
     [],
   )
 
-  const statusInterface = ['Agendado', 'Cancelado', 'Atendido']
-  const sessionTypeInterface = ['Individual', 'Dupla', 'Grupo']
-
   useEffect(() => {
+    const statusInterface = ['Agendado', 'Cancelado', 'Atendido']
+    const sessionTypeInterface = ['Individual', 'Dupla', 'Grupo']
     const getSessoes = async () => {
-      const { data } = await api.get('/session/list', {
-        headers: { Authorization: 'Bearer ' + token },
-      })
+      const { data } = await api.get('/session/list')
 
       const newData = data.data.map((session) => {
         const pacientList = []
@@ -76,7 +72,7 @@ export function SessionPage() {
     }
 
     getSessoes()
-  }, [token, sessionTypeInterface, statusInterface])
+  }, [])
 
   return (
     <>
