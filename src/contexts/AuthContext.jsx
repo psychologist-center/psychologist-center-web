@@ -18,9 +18,7 @@ export const AuthProvider = ({ children }) => {
 
     async function getUserData() {
       try {
-        const { data } = await api.get('/checktoken', {
-          headers: { Authorization: 'Bearer ' + token },
-        })
+        const { data } = await api.get('/checktoken')
         setUser(data)
       } catch (e) {
         localStorage.clear()
