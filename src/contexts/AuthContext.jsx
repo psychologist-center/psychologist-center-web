@@ -54,7 +54,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data.data)
       localStorage.setItem('@Auth:token', data.token)
     } catch (e) {
-      console.log('ERRO', e)
       toast({
         title:
           e instanceof AxiosError && e.response.data

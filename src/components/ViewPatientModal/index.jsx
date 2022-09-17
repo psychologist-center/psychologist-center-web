@@ -22,8 +22,6 @@ export function ViewPatientModal({ viewPatient, data, setPacientes }) {
     resolver: zodResolver(patientEditValidatorSchema),
   })
 
-  console.log(errors)
-
   useEffect(() => {
     if (Object.keys(data).length) {
       Object.entries(data).forEach(([key, value]) =>
