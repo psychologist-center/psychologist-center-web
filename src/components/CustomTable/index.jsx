@@ -56,7 +56,7 @@ export function CustomTable({ columns, data, onOpen, setSelectedPatient }) {
   )
 
   function handleOpenViewPatient(data) {
-    setSelectedPatient(data.values)
+    setSelectedPatient(data.original)
     onOpen()
   }
 
@@ -169,11 +169,9 @@ export function CustomTable({ columns, data, onOpen, setSelectedPatient }) {
               w={32}
               value={pageSize}
               onChange={(e) => {
-                console.log('target' + e.target.value)
                 setPageSize(Number(e.target.value))
               }}
             >
-              {console.log(pageSize)}
               {[5].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   Show {pageSize}
