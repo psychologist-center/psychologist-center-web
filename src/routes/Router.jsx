@@ -4,6 +4,7 @@ import { DashboardPage } from '../pages/Dashboard'
 import { LoginPage } from '../pages/Login'
 import { PacientePage } from '../pages/Paciente'
 import { RegisterPage } from '../pages/Register'
+import ResourcePage from '../pages/Resource'
 import { SessionPage } from '../pages/Session'
 import { PrivateRoute } from './PrivateRoutes'
 
@@ -19,6 +20,7 @@ export function Router() {
           <Route path="" element={<DashboardPage />} />
           <Route path="paciente" element={<PacientePage />} />
           <Route path="sessao" element={<SessionPage />} />
+          <Route path="recursos" element={<ResourcePage />} />
         </Route>
       </Route>
     </Routes>
