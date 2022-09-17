@@ -27,6 +27,8 @@ export function TemplateModal({
         finalFocusRef={finalRef}
         isOpen={isOpen}
         onClose={onClose}
+        closeOnOverlayClick={false}
+        closeOnEsc={false}
       >
         <ModalOverlay />
         <ModalContent>
