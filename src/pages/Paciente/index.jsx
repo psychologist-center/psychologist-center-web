@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { CustomTable } from '../../components/CustomTable'
 import { api } from '../../services/api'
-import { Flex, useDisclosure, Button } from '@chakra-ui/react'
-import { PlusCircle } from 'phosphor-react'
+import { Flex, useDisclosure } from '@chakra-ui/react'
 import { columns } from '../../utils/constants/patientsColumn'
 import { ViewPatientModal } from '../../components/ViewPatientModal'
 import { AddPatientModel } from '../../components/AddPatientModel'
+import AddButton from '../../components/AddButton'
 
 export function PacientePage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const token = localStorage.getItem('@Auth:token')
   const [pacientes, setPacientes] = useState([])
   const addPatient = useDisclosure()
   const viewPatient = useDisclosure()
@@ -17,31 +15,17 @@ export function PacientePage() {
 
   useEffect(() => {
     const getPacientes = async () => {
-      const { data } = await api.get('/user/list/patient', {
-        headers: { Authorization: 'Bearer ' + token },
-      })
+      const { data } = await api.get('/user/list/patient')
 
       setPacientes(data.data)
     }
 
     getPacientes()
-  }, [token])
+  }, [])
 
   return (
     <Flex direction="column" alignItems="center" mt="8%">
-      <Button
-        bg="brand-purple"
-        color="base-white"
-        _hover={{
-          background: 'brand-purple-hover',
-          color: 'base-white',
-        }}
-        onClick={addPatient.onOpen}
-      >
-        <Flex justifyContent="center" align="center" gap="2">
-          <PlusCircle size={23} weight="fill" /> Adicionar Paciente
-        </Flex>
-      </Button>
+      <AddButton label="Adicionar Paciente" onClick={addPatient.onOpen} />
 
       <AddPatientModel setPacientes={setPacientes} addPatient={addPatient} />
 

@@ -1,13 +1,10 @@
 import React from 'react'
-import { Flex, Icon, Link } from '@chakra-ui/react'
+import { Flex, Icon } from '@chakra-ui/react'
+import { Link } from 'react-router-dom'
 
 export const NavItem = ({ path, icon, children, ...rest }) => {
   return (
-    <Link
-      href={path}
-      style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}
-    >
+    <Link to={path}>
       <Flex
         align="center"
         p="4"

@@ -18,9 +18,7 @@ export const AuthProvider = ({ children }) => {
 
     async function getUserData() {
       try {
-        const { data } = await api.get('/checktoken', {
-          headers: { Authorization: 'Bearer ' + token },
-        })
+        const { data } = await api.get('/checktoken')
         setUser(data)
       } catch (e) {
         localStorage.clear()
@@ -56,7 +54,6 @@ export const AuthProvider = ({ children }) => {
       setUser(data.data)
       localStorage.setItem('@Auth:token', data.token)
     } catch (e) {
-      console.log('ERRO', e)
       toast({
         title:
           e instanceof AxiosError && e.response.data

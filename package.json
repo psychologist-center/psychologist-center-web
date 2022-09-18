@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@badrap/result": "^0.2.12",
     "@chakra-ui/icons": "^2.0.9",
     "@chakra-ui/react": "^2.3.1",
     "@emotion/react": "^11.10.4",

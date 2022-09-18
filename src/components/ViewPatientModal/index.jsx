@@ -12,7 +12,6 @@ import { AxiosError } from 'axios'
 
 export function ViewPatientModal({ viewPatient, data, setPacientes }) {
   const toast = useToast()
-  const token = localStorage.getItem('@Auth:token')
 
   const {
     register,
@@ -22,8 +21,6 @@ export function ViewPatientModal({ viewPatient, data, setPacientes }) {
   } = useForm({
     resolver: zodResolver(patientEditValidatorSchema),
   })
-
-  console.log(errors)
 
   useEffect(() => {
     if (Object.keys(data).length) {
@@ -35,9 +32,7 @@ export function ViewPatientModal({ viewPatient, data, setPacientes }) {
 
   async function handleDeletePatient() {
     try {
-      await api.delete(`/user/${data.email}`, {
-        headers: { Authorization: 'Bearer ' + token },
-      })
+      await api.delete(`/user/${data.email}`)
       setPacientes((oldValue) =>
         oldValue.filter((patient) => patient.email !== data.email),
       )
@@ -63,9 +58,7 @@ export function ViewPatientModal({ viewPatient, data, setPacientes }) {
 
   async function handleEditPatient(data) {
     try {
-      await api.put(`/user/${data.email}`, data, {
-        headers: { Authorization: 'Bearer ' + token },
-      })
+      await api.put(`/user/${data.email}`, data)
       setPacientes((oldValue) =>
         oldValue.map((patient) =>
           patient.email === data.email ? data : patient,
