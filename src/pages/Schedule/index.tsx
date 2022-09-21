@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 
 import '@fullcalendar/react/dist/vdom'
 
-import FullCalendar from '@fullcalendar/react'
+import FullCalendar, { EventClickArg } from '@fullcalendar/react'
 
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -13,28 +13,44 @@ import { api } from '../../services/api'
 import { format } from 'date-fns'
 
 import './style.css'
+import { TemplateModal } from '../../components/TemplateModal'
+
+interface Session {
+  _id: string
+}
+interface FormattedSession {
+  title: string
+  date: string
+  id: string
+}
 
 export const SchedulePage = () => {
-  const [sessions, setSessions] = useState([
-    { title: 'Sessão com David', date: '2022-09-01' },
-    { title: 'Sessão com Arthur', date: '2022-09-02' },
-    { title: 'Sessão com Luiz', date: '2022-09-05' },
-    { title: 'Sessão com Rafael', date: '2022-09-06' },
-    { title: 'Sessão com Amanda', date: '2022-09-07' },
-  ])
+  const [sessions, setSessions] = useState(Array<Session>)
+
+  const [formattedSessions, setFormattedSessions] = useState(
+    Array<FormattedSession>,
+  )
+
+  function openSessionDetailsModal({ event }: EventClickArg) {
+    const eventId = event._def.publicId
+
+    const session = sessions.filter((session) => session._id === eventId)[0]
+  }
 
   useEffect(() => {
     api.get('/session/list').then((response) => {
-      const fetchedSessions = response.data.data
+      const sessions = response.data.data
+      setSessions(sessions)
 
-      const formattedSessions = fetchedSessions.map((session) => {
+      const newFormattedSessions = sessions.map((session) => {
         return {
           title: `Sessão com ${session.patient[0].name}`,
           date: format(new Date(session.appointment_date), 'yyyy-MM-dd'),
+          id: session._id,
         }
       })
 
-      setSessions([...sessions, ...formattedSessions])
+      setFormattedSessions([...formattedSessions, ...newFormattedSessions])
     })
   }, [])
 
@@ -44,10 +60,15 @@ export const SchedulePage = () => {
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         weekends={true}
-        events={[...sessions.map((session) => session)]}
+        events={[...formattedSessions.map((session) => session)]}
         eventColor="#87A2FB"
         eventTextColor="#fff"
+        eventClick={openSessionDetailsModal}
       />
+
+      <TemplateModal isOpen={true} title="Detalhes da sessão">
+        Teste
+      </TemplateModal>
     </div>
   )
 }
