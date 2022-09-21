@@ -1,0 +1,8 @@
+.calendar .fc-view {
+  background-color: white;
+}
+
+.fc-scrollgrid-section.fc-scrollgrid-section-header {
+  background-color: #6f38c5;
+  color: white;
+}
