@@ -1,82 +1,145 @@
 import React, { useState, useEffect } from 'react'
 
-import { api } from '../../services/api'
-import moment from 'moment/moment'
-import { CustomTable } from '../../components/CustomTable'
+import { Flex, Spinner, useToast } from '@chakra-ui/react'
+import AddButton from '../../components/AddButton'
+import SessionTable from './components/SessionTable'
+import sessionService from '../../services/session/session.service'
+import SessionModal from './components/SessionModal'
 
 export function SessionPage() {
-  const [sessoes, setSessoes] = useState([])
+  const toast = useToast()
+  const [sessions, setSessions] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const defaultSession = {
+    id: '',
+    patient_id: [],
+    appointment_date: '',
+    status: '',
+    session_type: '',
+    resource_ids: [],
+    duration: '',
+    topic: '',
+  }
+  const [selectedSession, setSelectedSession] = useState(defaultSession)
+  const [refresh, setRefresh] = useState(Math.random())
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Minhas Sessões',
-        columns: [
-          {
-            Header: 'Paciente',
-            accessor: 'pacients',
-          },
-          {
-            Header: 'Data de agendamento',
-            accessor: 'appointment_date',
-          },
-          {
-            Header: 'Status',
-            accessor: 'status',
-          },
-          {
-            Header: 'Tema abordado',
-            accessor: 'topic',
-          },
-
-          {
-            Header: 'Duração',
-            accessor: 'duration',
-          },
-          {
-            Header: 'Tipo de sessão',
-            accessor: 'session_type',
-          },
-        ],
-      },
-    ],
-    [],
-  )
+  const handleOnAddSession = () => {
+    setSelectedSession(defaultSession)
+    setIsModalOpen(true)
+  }
+  const handleOnClickSession = (session) => {
+    const {
+      _id: id,
+      patient,
+      // eslint-disable-next-line camelcase
+      appointment_date,
+      status,
+      // eslint-disable-next-line camelcase
+      session_type,
+      // eslint-disable-next-line camelcase
+      resource_ids,
+      duration,
+      topic,
+    } = session
+    setSelectedSession({
+      id,
+      patient_id: patient.map((p) => p._id),
+      // eslint-disable-next-line camelcase
+      appointment_date,
+      status,
+      // eslint-disable-next-line camelcase
+      session_type,
+      // eslint-disable-next-line camelcase
+      resource_ids,
+      duration,
+      topic,
+    })
+    setIsModalOpen(true)
+  }
+  const handleOnCloseModal = () => {
+    setIsModalOpen(false)
+  }
+  const handleOnDeleteModal = async (id) => {
+    setIsLoading(true)
+    const result = await sessionService.remove(id)
+    const message = result.isErr ? result.error.message : result.value
+    toast({
+      title: message,
+      status: result.isErr ? 'error' : 'success',
+      isClosable: true,
+      position: 'top-right',
+    })
+    setIsLoading(false)
+    setRefresh(Math.random())
+    handleOnCloseModal()
+  }
+  const handleOnSubmitModal = async (sessionData) => {
+    setIsLoading(true)
+    const result = sessionData.id.length
+      ? await sessionService.update(sessionData)
+      : await sessionService.create(sessionData)
+    const message = result.isErr ? result.error.message : result.value
+    toast({
+      title: message,
+      status: result.isErr ? 'error' : 'success',
+      isClosable: true,
+      position: 'top-right',
+    })
+    setIsLoading(false)
+    setRefresh(Math.random())
+    handleOnCloseModal()
+  }
 
   useEffect(() => {
-    const statusInterface = ['Agendado', 'Cancelado', 'Atendido']
-    const sessionTypeInterface = ['Individual', 'Dupla', 'Grupo']
-    const getSessoes = async () => {
-      const { data } = await api.get('/session/list')
+    const fetchData = async () => {
+      setIsLoading(true)
+      const result = await sessionService.getAll()
+      if (result.isErr) {
+        toast({
+          title: result.error.message,
+          status: 'error',
+          isClosable: true,
+          position: 'top-right',
+        })
+      }
 
-      const newData = data.data.map((session) => {
-        const pacientList = []
-
-        for (const i in session.patient) {
-          pacientList.push(session.patient[i].name)
-        }
-
-        return {
-          pacients: pacientList.join(', '),
-          status: statusInterface[session.status],
-          topic: session.topic,
-          duration: `${session.duration} min`,
-          appointment_date: moment(session.appointment_date)
-            .subtract(10, 'days')
-            .calendar(),
-          session_type: sessionTypeInterface[session.session_type],
-        }
-      })
-
-      setSessoes(newData)
+      setSessions(result.value)
     }
+    fetchData().then(() => {
+      setIsLoading(false)
+    })
+  }, [toast, refresh])
 
-    getSessoes()
-  }, [])
+  if (isLoading) {
+    return (
+      <Flex justifyContent="center" alignItems="center" height="200px">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="brand-purple"
+          size="xl"
+        />
+      </Flex>
+    )
+  }
 
   return (
-    <>
-      <CustomTable columns={columns} data={sessoes} />
-    </>
+    <Flex direction="column" alignItems="center">
+      <AddButton
+        label="Adicionar sessão"
+        onClick={handleOnAddSession}
+        disabled={isLoading}
+      />
+      <SessionTable onClick={handleOnClickSession} sessions={sessions} />
+      <SessionModal
+        isOpen={isModalOpen}
+        onClose={handleOnCloseModal}
+        session={selectedSession}
+        onDelete={handleOnDeleteModal}
+        onSubmit={handleOnSubmitModal}
+      />
+    </Flex>
   )
 }

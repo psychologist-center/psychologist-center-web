@@ -37,6 +37,7 @@
     "react-hook-form": "^7.34.2",
     "react-icons": "^4.4.0",
     "react-router-dom": "^6.3.0",
+    "react-select": "^5.4.0",
     "react-table": "^7.8.0",
     "yup": "^0.32.11",
     "zod": "^3.18.0"
