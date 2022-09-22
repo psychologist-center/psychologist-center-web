@@ -6,3 +6,7 @@
   background-color: #6f38c5;
   color: white;
 }
+
+.fc-event-title.fc-sticky:hover {
+  cursor: pointer;
+}
