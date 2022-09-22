@@ -9,6 +9,8 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
+import { Button, ModalFooter, Text, useDisclosure } from '@chakra-ui/react'
+
 import { api } from '../../services/api'
 import { format } from 'date-fns'
 
@@ -17,6 +19,13 @@ import { TemplateModal } from '../../components/TemplateModal'
 
 interface Session {
   _id: string
+  appointment_date: Date
+  patient: {
+    name: string
+    email: string
+  }
+  topic: string
+  duration: string
 }
 interface FormattedSession {
   title: string
@@ -25,7 +34,10 @@ interface FormattedSession {
 }
 
 export const SchedulePage = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [sessions, setSessions] = useState(Array<Session>)
+  const [session, setSession] = useState({} as Session)
 
   const [formattedSessions, setFormattedSessions] = useState(
     Array<FormattedSession>,
@@ -33,8 +45,10 @@ export const SchedulePage = () => {
 
   function openSessionDetailsModal({ event }: EventClickArg) {
     const eventId = event._def.publicId
-
     const session = sessions.filter((session) => session._id === eventId)[0]
+
+    setSession(session)
+    onOpen()
   }
 
   useEffect(() => {
@@ -50,7 +64,7 @@ export const SchedulePage = () => {
         }
       })
 
-      setFormattedSessions([...formattedSessions, ...newFormattedSessions])
+      setFormattedSessions([...newFormattedSessions])
     })
   }, [])
 
@@ -66,9 +80,29 @@ export const SchedulePage = () => {
         eventClick={openSessionDetailsModal}
       />
 
-      <TemplateModal isOpen={true} title="Detalhes da sessão">
-        Teste
-      </TemplateModal>
+      {Object.keys(session).length && (
+        <TemplateModal
+          isOpen={isOpen}
+          onClose={onClose}
+          title="Detalhes do agendamento"
+          modalFooter={
+            <ModalFooter>
+              <Button onClick={onClose}>Fechar</Button>
+            </ModalFooter>
+          }
+        >
+          <Text>
+            {`Data do agendamento: ${format(
+              new Date(session.appointment_date),
+              'dd-MM-yyyy',
+            )}`}
+          </Text>
+          <Text>{`Nome do paciente: ${session.patient[0].name}`}</Text>
+          <Text>{`E-mail: ${session.patient[0].email}`}</Text>
+          <Text>{`Tópico: ${session.topic}`}</Text>
+          <Text>{`Duraçāo: ${session.duration} minutos`}</Text>
+        </TemplateModal>
+      )}
     </div>
   )
 }
